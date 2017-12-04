@@ -1,6 +1,6 @@
 package cn.com.flaginfo.listener;
 
-import cn.com.flaginfo.listener.threads.DataDiffThread;
+import cn.com.flaginfo.listener.threads.DataDiffPoolManage;
 import cn.com.flaginfo.listener.web.init.PropertiesSourceInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +22,7 @@ public class DataDiffDealApplication {
         sa.addInitializers(new PropertiesSourceInitializer());
         sa.run(args);
         log.info("server start up end");
-
-        new DataDiffThread("db_zx").start();
+        new DataDiffPoolManage(10000).start();
 
     }
 
