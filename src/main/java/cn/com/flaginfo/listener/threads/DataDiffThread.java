@@ -1,6 +1,7 @@
 package cn.com.flaginfo.listener.threads;
 
 import cn.com.flaginfo.listener.com.bean.BeanFactory;
+import cn.com.flaginfo.listener.com.mq.Producer;
 import cn.com.flaginfo.listener.com.support.PartialCollection;
 import cn.com.flaginfo.listener.com.support.QueryInfo;
 import cn.com.flaginfo.listener.service.TaskService;
@@ -42,7 +43,11 @@ public class DataDiffThread extends PoolItem {
                     String tableId = (String) row.get("tableId");
                     String type = (String) row.get("type");
                     String tableName = (String) row.get("tableName");
-                    log.info("====>>>read row:" + id + "," + type + "," + tableName + "," + tableId);
+                    Map msg = taskService.findDataById(dbName, tableName, tableId);
+                    if(msg!=null){
+                        msg.put("_DATA_OP_TYPE",type);
+                        Producer.getInstance().sendJsonMessage("5to6dataSync","tableData",msg);
+                    }
                     ids.add(id);
                 }
 
@@ -50,7 +55,7 @@ public class DataDiffThread extends PoolItem {
 
                 log.info("*************>>[" + this.itemName + "]dataDiffThread exec end****************");
 
-                //taskService.saveTest(this.dbName);
+                //taskService.saveTest(dbName);
                 Thread.sleep(5000);
             } catch (Exception e) {
                 e.printStackTrace();

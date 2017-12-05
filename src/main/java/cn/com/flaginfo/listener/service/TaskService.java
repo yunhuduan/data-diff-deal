@@ -5,6 +5,7 @@ import cn.com.flaginfo.listener.com.jdbc.DBOperation;
 import cn.com.flaginfo.listener.com.support.PartialCollection;
 import cn.com.flaginfo.listener.com.support.QueryInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,11 @@ public class TaskService extends BaseService {
     public PartialCollection getDataDiffList(String dbName, Map<String, Object> params, QueryInfo info) {
         String sql = "select id,table_id,type,table_name from im_data_diff_listener order by id asc";
         return createDBOperation(sql, dbName).setQueryInfo(info).listPartial();
+    }
+
+    public Map findDataById(String dbName,String tableName,String id) {
+        String sql = "select * from "+tableName+" where id = :id";
+        return createDBOperation(sql, dbName).setParameter("id",id).setQueryInfo(new QueryInfo()).uniqueResult();
     }
 
     public void delDiffData(String dbName, List<String> ids) {
